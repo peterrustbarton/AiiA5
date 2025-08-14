@@ -1,0 +1,6 @@
+./app/components/trade-confirmation-modal.tsx:#0B1426
+./app/components/trade-confirmation-modal.tsx:#1E293B
+./app/components/trade-confirmation-modal.tsx:#334155
+./app/components/trade-entry-modal.tsx:#0B1426
+./app/components/trade-entry-modal.tsx:#1E293B
+./app/components/trade-entry-modal.tsx:#334155

@@ -1,0 +1,106 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 222 47% 11%;
+    --foreground: 210 40% 96%;
+    --card: 222 47% 14%;
+    --card-foreground: 210 40% 96%;
+    --popover: 222 47% 14%;
+    --popover-foreground: 210 40% 96%;
+    --primary: 190 95% 55%;
+    --primary-foreground: 222 47% 11%;
+    --secondary: 222 47% 16%;
+    --secondary-foreground: 210 40% 96%;
+    --muted: 222 47% 16%;
+    --muted-foreground: 215 20% 65%;
+    --accent: 190 95% 55%;
+    --accent-foreground: 222 47% 11%;
+    --destructive: 0 80% 65%;
+    --destructive-foreground: 210 40% 96%;
+    --border: 222 47% 16%;
+    --input: 222 47% 16%;
+    --ring: 190 95% 55%;
+    --radius: 0.5rem;
+    --success: 140 60% 55%;
+    --warning: 45 100% 70%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+.animate-count-up {
+  transition: all 0.5s ease-out;
+}
+
+.chart-container {
+  @apply w-full h-full min-h-[300px];
+}
+
+.parallax-bg {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+.glass-effect {
+  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.5s ease-out;
+}
+
+.success-color {
+  color: hsl(var(--success));
+}
+
+.error-color {
+  color: hsl(var(--destructive));
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--muted)) transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--muted));
+  border-radius: 3px;
+}

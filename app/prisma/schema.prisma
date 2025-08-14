@@ -1,0 +1,302 @@
+generator client {
+    provider = "prisma-client-js"
+    binaryTargets = ["native", "linux-musl-arm64-openssl-3.0.x"]
+    output = "/home/ubuntu/aiia-2.0/app/node_modules/.prisma/client"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  password      String?
+  emailVerified DateTime?
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  // User settings
+  theme         String    @default("dark")
+  alpacaApiKey  String?
+  alpacaSecret  String?
+  isLiveTrading Boolean   @default(false)
+
+  // Account tier and subscription
+  accountTier   String    @default("Free") // "Free", "Pro", "Admin"
+  subscriptionId String?
+  subscriptionStatus String? // "active", "cancelled", "expired"
+  subscriptionEndsAt DateTime?
+
+  // Onboarding and disclaimers
+  hasCompletedOnboarding Boolean @default(false)
+  hasAcceptedDisclaimer Boolean @default(false)
+  disclaimerAcceptedAt DateTime?
+  
+  // Automation settings
+  aiTradingEnabled Boolean @default(false)
+  automationSettings Json? // Buy/sell thresholds, limits, confirmations
+  riskTolerance String @default("medium") // "low", "medium", "high"
+
+  // Relationships
+  accounts      Account[]
+  sessions      Session[]
+  watchlists    Watchlist[]
+  trades        Trade[]
+  alerts        Alert[]
+  portfolios    Portfolio[]
+  recommendations Recommendation[]
+  subscription  Subscription?
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model Watchlist {
+  id        String   @id @default(cuid())
+  userId    String
+  symbol    String   // e.g., "AAPL", "BTC"
+  type      String   // "stock" or "crypto"
+  name      String   // e.g., "Apple Inc", "Bitcoin"
+  addedAt   DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, symbol])
+}
+
+model Portfolio {
+  id           String @id @default(cuid())
+  userId       String
+  totalValue   Float  @default(10000) // Starting with $10,000 virtual money
+  cashBalance  Float  @default(10000)
+  totalReturn  Float  @default(0)
+  dailyReturn  Float  @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId])
+}
+
+model Trade {
+  id         String    @id @default(cuid())
+  userId     String
+  symbol     String
+  type       String    // "stock" or "crypto"
+  action     String    // "buy" or "sell"
+  quantity   Float
+  price      Float
+  totalValue Float
+  fee        Float     @default(0)
+  status     String    @default("completed") // "pending", "completed", "cancelled", "rejected"
+  orderType  String?   // "market", "limit", "stop", "stop_limit"
+  limitPrice Float?
+  stopPrice  Float?
+  timeInForce String?  // "day", "gtc", "ioc", "fok"
+  executedAt DateTime  @default(now())
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Alert {
+  id          String   @id @default(cuid())
+  userId      String
+  symbol      String
+  type        String   // "stock" or "crypto"
+  condition   String   // "above", "below"
+  targetPrice Float
+  currentPrice Float?
+  isActive    Boolean  @default(true)
+  triggered   Boolean  @default(false)
+  message     String?
+  createdAt   DateTime @default(now())
+  triggeredAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String   // "alert", "trade", "news", "system"
+  data      Json?    // Additional data for the notification
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model MarketData {
+  id             String   @id @default(cuid())
+  symbol         String
+  type           String   // "stock" or "crypto"
+  price          Float
+  change         Float
+  changePercent  Float
+  volume         Float?
+  marketCap      Float?
+  high24h        Float?
+  low24h         Float?
+  lastUpdated    DateTime @default(now())
+
+  @@unique([symbol, type])
+  @@index([type, changePercent])
+}
+
+model AIAnalysis {
+  id              String   @id @default(cuid())
+  symbol          String
+  type            String   // "stock" or "crypto"
+  recommendation  String   // "buy", "sell", "hold"
+  confidence      Int      // 0-100
+  reasoning       String   @db.Text
+  technicalScore  Int?     // 0-100
+  fundamentalScore Int?    // 0-100 (for stocks)
+  sentimentScore  Int?     // 0-100
+  riskLevel       String?  // "low", "medium", "high"
+  targetPrice     Float?
+  stopLoss        Float?
+  dataSource      Json?    // Sources used for analysis
+  createdAt       DateTime @default(now())
+  expiresAt       DateTime // Cache expiry
+
+  @@unique([symbol, type])
+  @@index([createdAt])
+}
+
+model NewsArticle {
+  id          String   @id @default(cuid())
+  title       String
+  summary     String?  @db.Text
+  content     String?  @db.Text
+  url         String   @unique
+  source      String
+  author      String?
+  publishedAt DateTime
+  symbols     String[] // Related symbols
+  sentiment   Float?   // -1 to 1
+  createdAt   DateTime @default(now())
+
+  @@index([publishedAt])
+  @@index([symbols])
+}
+
+model Recommendation {
+  id            String   @id @default(cuid())
+  userId        String
+  symbol        String
+  type          String   // "stock" or "crypto"
+  recommendation String  // "buy", "sell", "hold"
+  confidence    Int      // 0-100
+  reasoning     String   @db.Text
+  targetPrice   Float?
+  stopLoss      Float?
+  priority      String   @default("medium") // "low", "medium", "high"
+  status        String   @default("active") // "active", "dismissed", "executed"
+  createdAt     DateTime @default(now())
+  expiresAt     DateTime
+  viewedAt      DateTime?
+  executedAt    DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, status])
+  @@index([createdAt])
+}
+
+model FinancialDisclaimer {
+  id            String   @id @default(cuid())
+  userId        String
+  disclaimerType String  // "login", "trading", "investment"
+  version       String   @default("1.0")
+  content       String   @db.Text
+  acceptedAt    DateTime @default(now())
+  ipAddress     String?
+  userAgent     String?
+
+  @@index([userId])
+  @@index([disclaimerType])
+}
+
+model ChatMessage {
+  id          String   @id @default(cuid())
+  userId      String
+  message     String   @db.Text
+  response    String   @db.Text
+  context     Json?    // Additional context for the chat
+  feedback    String?  // "helpful", "not_helpful"
+  createdAt   DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Subscription {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  tier        String   @default("free") // "free", "pro", "admin"
+  plan        String   // "pro", "premium"
+  status      String   // "active", "cancelled", "expired", "trialing"
+  amount      Float
+  currency    String   @default("USD")
+  interval    String   // "monthly", "yearly"
+  startedAt   DateTime @default(now())
+  endsAt      DateTime?
+  cancelledAt DateTime?
+  metadata    Json?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+}
+
+model SystemSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+  updatedAt DateTime @updatedAt
+
+  @@index([key])
+}

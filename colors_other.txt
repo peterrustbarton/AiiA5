@@ -1,0 +1,40 @@
+./app/tailwind.config.ts:23:        background: 'hsl(var(--background))',
+./app/tailwind.config.ts:24:        foreground: 'hsl(var(--foreground))',
+./app/tailwind.config.ts:26:          DEFAULT: 'hsl(var(--card))',
+./app/tailwind.config.ts:27:          foreground: 'hsl(var(--card-foreground))',
+./app/tailwind.config.ts:30:          DEFAULT: 'hsl(var(--popover))',
+./app/tailwind.config.ts:31:          foreground: 'hsl(var(--popover-foreground))',
+./app/tailwind.config.ts:34:          DEFAULT: 'hsl(var(--primary))',
+./app/tailwind.config.ts:35:          foreground: 'hsl(var(--primary-foreground))',
+./app/tailwind.config.ts:38:          DEFAULT: 'hsl(var(--secondary))',
+./app/tailwind.config.ts:39:          foreground: 'hsl(var(--secondary-foreground))',
+./app/tailwind.config.ts:42:          DEFAULT: 'hsl(var(--muted))',
+./app/tailwind.config.ts:43:          foreground: 'hsl(var(--muted-foreground))',
+./app/tailwind.config.ts:46:          DEFAULT: 'hsl(var(--accent))',
+./app/tailwind.config.ts:47:          foreground: 'hsl(var(--accent-foreground))',
+./app/tailwind.config.ts:50:          DEFAULT: 'hsl(var(--destructive))',
+./app/tailwind.config.ts:51:          foreground: 'hsl(var(--destructive-foreground))',
+./app/tailwind.config.ts:53:        border: 'hsl(var(--border))',
+./app/tailwind.config.ts:54:        input: 'hsl(var(--input))',
+./app/tailwind.config.ts:55:        ring: 'hsl(var(--ring))',
+./app/tailwind.config.ts:57:          '1': 'hsl(var(--chart-1))',
+./app/tailwind.config.ts:58:          '2': 'hsl(var(--chart-2))',
+./app/tailwind.config.ts:59:          '3': 'hsl(var(--chart-3))',
+./app/tailwind.config.ts:60:          '4': 'hsl(var(--chart-4))',
+./app/tailwind.config.ts:61:          '5': 'hsl(var(--chart-5))',
+./app/app/globals.css:8:    --background: 222 47% 11%;
+./app/app/globals.css:57:  background: rgba(255, 255, 255, 0.1);
+./app/app/globals.css:61:  background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+./app/app/globals.css:63:  -webkit-text-fill-color: transparent;
+./app/app/globals.css:83:  color: hsl(var(--success));
+./app/app/globals.css:87:  color: hsl(var(--destructive));
+./app/app/globals.css:92:  scrollbar-color: hsl(var(--muted)) transparent;
+./app/app/globals.css:100:  background: transparent;
+./app/app/globals.css:104:  background-color: hsl(var(--muted));
+./app/components/price-chart.tsx:93:                    stopColor={isPositive ? 'hsl(var(--success))' : 'hsl(var(--destructive))'} 
+./app/components/price-chart.tsx:98:                    stopColor={isPositive ? 'hsl(var(--success))' : 'hsl(var(--destructive))'} 
+./app/components/price-chart.tsx:106:                stroke={isPositive ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
+./app/components/price-chart.tsx:115:              stroke={isPositive ? 'hsl(var(--success))' : 'hsl(var(--destructive))'}
+./app/components/account-tier-badge.tsx:22:          color: 'bg-gradient-to-r from-purple-500 to-pink-500',
+./app/components/account-tier-badge.tsx:29:          color: 'bg-gradient-to-r from-blue-500 to-cyan-500',
+./app/components/account-tier-badge.tsx:36:          color: 'bg-muted',
